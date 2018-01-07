@@ -1,0 +1,68 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<title>login</title>
+<link rel="stylesheet" th:href="@{/css/jq22.css}">
+</head>
+<body>
+<!-- begin -->
+<div id="login">
+    <div class="wrapper">
+   	 	<div style="float:right;margin-right:20px;"><a th:href="@{/}">返回首页</a></div>
+        <div class="register">
+            <form th:action="@{/login}" method="post" th:object="${userDto}" class="container offset1 loginform">
+                <div id="owl-login">
+                    <div class="hand"></div>
+                    <div class="hand hand-r"></div>
+                    <div class="arms">
+                        <div class="arm"></div>
+                        <div class="arm arm-r"></div>
+                    </div>
+                </div>
+                <div class="pad">
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="account" class="control-label fa fa-user"></label>
+                        	<input id="account" type="text" th:field="*{account}" placeholder="Account" tabindex="1" class="form-control input-medium">
+                        	<span class="error" th:if="${#fields.hasErrors('account')}" th:errors="*{account}">账号不存在</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="password" class="control-label fa fa-lock"></label>
+                            <input id="password" type="password" th:field="*{password}" placeholder="Password" tabindex="2" class="form-control input-medium">
+                        	<span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">密码错误</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="password" class="control-label fa fa-lock"></label>
+                            <input type="text" th:field="*{vcode}" placeholder="Vcode" tabindex="3" class="form-control input-medium">
+                        	<p class="error" th:if="${#fields.hasErrors('vcode')}" th:errors="*{vcode}">验证码错误</p>
+                       		<img src="../static/img/vericode.jpg" th:src="@{/vericode.jpg}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions"><a href="#" tabindex="5" class="btn pull-left btn-link text-muted">Forgot password?</a><a th:href="@{/register}" tabindex="6" class="btn btn-link text-muted">Sign Up</a>
+                    <button type="submit" tabindex="4" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+    <script>
+    $(function() {
+
+        $('#login #password').focus(function() {
+            $('#owl-login').addClass('password');
+        }).blur(function() {
+            $('#owl-login').removeClass('password');
+        });
+    });
+    </script>
+</div>
+<!-- end -->
+</body>
+</html>

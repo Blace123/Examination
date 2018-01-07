@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<style>
+.error{
+	color:red;
+}
+</style>
+选择你要出的题目类型<br/>
+<form  id="commentForm" action="#" th:name="${classify.id}" th:action="@{'/info/'+ ${session?.userid?.id}  + '/' + ${classify.id} +'/random/create'}">
+<div class="abc">
+试卷标题:<input name="papername">
+</div>
+<div class="show">
+	<div class="box">
+		<label class="input" id="xzcount" th:name="${xzcount}">
+			<input class="check" name="question_type[]" type="checkbox" value="选择题" />选择题 
+		</label>
+		<div class="content" style="display:none;">填写此题型多少道<input type="text" name="number[0]"  th:placeholder="'最多填写不能超过'+${xzcount}+'题'" /><span data-error="number[0]"></span></div>
+	</div>
+	 <div class="box">
+		<label class="input" id="pdcount" th:name="${pdcount}">
+			<input class="check" name="question_type[]" type="checkbox" value="判断题" />判断题
+		</label>
+		<div class="content" style="display:none;">填写此题型多少道<input type="text" name="number[1]" th:placeholder="'最多填写不能超过'+${pdcount}+'题'"/><span data-error="number[1]"></span></div>
+	</div>
+	<div class="box">
+		<label class="input">
+			<input class="check" name="question_type[]" type="checkbox" value="解答题" />解答题
+		</label>
+		<div class="content" style="display:none;">填写此题型多少道<input type="text" name="number[2]" /></div>
+	</div>
+	<label for="question_type[]" class="error" style="display:none">请选择至少两种类型的垃圾邮件。</label>
+	 <div class="button">
+		<button class="btn btn-primary radius" name="submit" type="button"> 提交</button>
+	</div>  
+</div>
+</form>
+
+</body>
+<script type="text/javascript" th:src="@{/js/jquery-3.2.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.validate.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/messages_zh.js}"></script>
+<script type="text/javascript">
+$(document).on("click", "[name='submit']", function() {
+	var flag = $("#commentForm").valid();
+   if(!flag){
+       //没有通过验证
+       return;
+   }
+   var form = $(this).parents("form");
+   var classifyid = $(this).parents("form").attr("name");
+   $.post(form.attr("action"), form.serialize(), function(json) {
+   	console.log( form.serialize());
+       if (json.result == "success") {
+       	console.log(json);
+       	setTimeout(function(){
+            	 window.location.href = "/info/"+classifyid+"/exam";
+            },1000);
+       } else {
+           $.each(json, function(i, val) {
+           	if (i != "result") {
+                   if ($("[data-error='" + i + "']").length)
+                       $("[data-error='" + i + "']").html(val);
+               }
+           });
+       }
+   }, "json");
+});
+$(function() {
+	var xzcount = $("#xzcount").attr("name");
+	var pdcount = $("#pdcount").attr("name");
+   $("#commentForm").validate({
+   	rules:{
+   		papername : "required",
+   		"number[0]" : {
+   			digits : true,
+   			max : xzcount
+   		},
+   		"number[1]" : {
+   			digits : true,
+   			max : pdcount
+   		},
+   		"question_type[]" : "required"
+   	},
+   	messages : {
+   		papername : "请输入您的试卷名字",
+   		"number[0]" : {
+   			digits: "只能输入数字",
+   			max: "最多填写不能超过"+xzcount+"道"
+   	      },
+   	    "number[1]" : {
+   	    	digits: "只能输入数字",
+   			max: "最多填写不能超过"+pdcount+"道"
+   	    },  
+   	    "question_type[]" : "最少选择一项"
+   	}
+   });
+}); 
+var indexs=0;
+$(document).on("click", ".check", function() {
+	if($(this).prop("checked")){    //如果当前的复选框是选中状态
+		indexs=$(".check").index($(this));    //复选框的当前索引值
+		$(".content").eq(indexs).show();    //与复选框索引值相同的content显示
+	}
+	else{    //如果当前的复选框没有被选中
+		indexs=$(".check").index($(this));
+		$(".content").eq(indexs).hide();    //与复选框索引值相同的content隐藏
+	}
+});
+</script>
+</html>

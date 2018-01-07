@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"> 
+	<title>考拉在线</title>
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/css/index.css}"/>
+</head>
+<body>
+<div class="container">
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <a class="navbar-brand" th:href="@{/}">Koala</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:if="*{session?.userid} ==null">未登录 <span class="caret"></span></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:if="*{session?.userid} !=null"><img class="img_head" th:src="@{${session?.userid?.headimgs}}"><text name="username" th:if="${session?.userid} != null" th:text="${session?.userid?.nickname}"></text></img></a>
+          <ul class="dropdown-menu">
+            <li><a th:if="${session?.userid} == null" th:href="@{/login}">点我登陆</a></li>
+            <li><a th:if="${session?.userid} == null" th:href="@{/register}">没有账号</a></li>
+            <li th:if="${session?.userid} != null"><a th:href="@{/personal}">个人信息</a></li>
+            <li th:if="${session?.userid} != null" th:unless="${session?.userid?.role} == 'STUDENTS'"><a th:href="@{/backstage}">后台管理</a></li>
+            <li th:if="${session?.userid} != null" th:unless="${session?.userid?.role} != 'STUDENTS'"><a th:href="@{'/finish/'+ ${session?.userid?.id} +'/answer'}">已做試卷</a></li>
+            <li th:if="${session?.userid} != null"><a th:href="@{/logout}">登出</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<table class="table table-hover table-bordered table-condensed" name="classTable" style='vertical-align: middle;text-align:center'>
+	<tbody style="text-align:center">
+		<tr th:each="classify : ${AllClassify}">
+			<th><a href="">[[${classify?.name}]]</a></th>
+			<td th:each="sonClassify : ${classify?.classifys}" th:name="yk" th:id="${sonClassify?.id}">[[${sonClassify?.name}]]</td>
+		</tr>
+	</tbody>
+</table>
+</div>
+<div class="alertbox">
+	<a name="sItem" href="#" class="btn btn-primary">单题测验</a>
+	<a name="sButton" href="#" class="btn btn-primary">试卷测试</a>
+	<a name="pButton" href="#" class="btn btn-primary" th:if="${session?.userid} != null">随机抽取试题</a>
+	<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/js/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script type="text/javascript">
+$(document).on("click", "[name='yk']" ,function(){
+	$(".alertbox").show(300);
+	$("[name='sItem']").attr("href", "/info/"+this.id+"/items/details/");
+	$("[name='sButton']").attr("href", "/info/"+this.id+"/exam");
+	$("[name='pButton']").attr("href", "/info/"+this.id+"/random");
+});
+$(document).on("click", ".alertbox .close", function(){
+	$(".alertbox").hide(300);
+});
+</script>
+</html>
